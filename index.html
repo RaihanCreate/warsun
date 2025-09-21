@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WARSUN - Menu Makanan & Minuman</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .header-hidden {
+            transform: translateY(-100%);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: #ffd166;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 2rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23feb47b" opacity="0.2"/><path d="M0 0L100 100" stroke="%23feb47b" stroke-width="2" opacity="0.2"/><path d="M100 0L0 100" stroke="%23feb47b" stroke-width="2" opacity="0.2"/></svg>');
+            color: white;
+            text-align: center;
+            padding: 8rem 2rem 4rem; /* Ditambah padding atas untuk header fixed */
+            margin-bottom: 3rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            padding: 0 20px;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus {
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+        
+        .menu-section {
+            padding: 2rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #333;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            margin: 10px auto;
+            border-radius: 2px;
+        }
+        
+        .menu-category {
+            margin-bottom: 3rem;
+        }
+        
+        .category-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed #ff9a76;
+        }
+        
+        .category-title i {
+            margin-right: 15px;
+            font-size: 1.8rem;
+            color: #ff7e5f;
+        }
+        
+        .category-title h2 {
+            color: #333;
+            font-size: 1.8rem;
+        }
+        
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .menu-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .item-desc {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+        
+        .item-price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ff7e5f;
+            white-space: nowrap;
+            margin-left: 15px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .badge-popular {
+            background-color: #ffdd33;
+            color: #333;
+        }
+        
+        .badge-new {
+            background-color: #4e73df;
+            color: white;
+        }
+        
+        .badge-vegan {
+            background-color: #1cc88a;
+            color: white;
+        }
+        
+        .order-btn {
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 2rem auto;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 8px rgba(255, 126, 95, 0.3);
+            text-decoration: none;
+            text-align: center;
+            width: fit-content;
+        }
+        
+        .order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 126, 95, 0.4);
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 2.5rem 0;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 1.5rem;
+            padding: 0 15px;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #feb47b;
+        }
+        
+        .footer-section p, .footer-section li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section a:hover {
+            color: #ff7e5f;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid #555;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            grid-column: 1 / -1;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Style baru untuk team section */
+        .team-section {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 3rem 0;
+        }
+        
+        .team-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .team-member {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(255, 126, 95, 0.2);
+        }
+        
+        .team-member::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        
+        .team-member:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .member-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        .team-member:hover .member-name {
+            color: #ff7e5f;
+        }
+        
+        .member-role {
+            color: #ff7e5f;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .member-desc {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+        
+        .member-social {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .member-social a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #f1f1f1;
+            color: #ff7e5f;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .member-social a:hover {
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        /* Animasi untuk team member */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .team-member {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        
+        .team-member:nth-child(1) { animation-delay: 0.1s; }
+        .team-member:nth-child(2) { animation-delay: 0.2s; }
+        .team-member:nth-child(3) { animation-delay: 0.3s; }
+        .team-member:nth-child(4) { animation-delay: 0.4s; }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1.5rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            nav ul li {
+                margin: 0.5rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero {
+                padding: 7rem 2rem 3rem; /* Diperbaiki untuk header fixed di mobile */
+            }
+            
+            .menu-items {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <div class="container header-content">
+            <div class="logo" onclick="scrollToTop()">
+                <i class="fas fa-utensils"></i>
+                WARSUN (Warung Sunda)
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#beranda"><i class="fas fa-home"></i> Beranda</a></li>
+                    <li><a href="#menu"><i class="fas fa-book-open"></i> Menu</a></li>
+                    <li><a href="#tentang"><i class="fas fa-info-circle"></i> Tentang</a></li>
+                    <li><a href="#kontak"><i class="fas fa-phone"></i> Kontak</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="beranda">
+        <div class="container">
+            <h1>Selamat Datang di WARSUN</h1>
+            <p>Warung Sunda "Ngeunah Pisan" - Tempat Nongkrong Paling Ngeunah</p>
+        </div>
+    </section>
+
+    <section class="menu-section" id="menu">
+        <div class="container">
+            <h2 class="section-title">Menu Spesial Kami</h2>
+            
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-box" placeholder="Cari menu favorit Anda...">
+            </div>
+            
+            <div class="menu-category">
+                <div class="category-title">
+                    <i class="fas fa-utensils"></i>
+                    <h2>SAKADANG NYOSH</h2>
+                </div>
+                <div class="menu-items">
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3 class="item-name">Nasi Goreng</h3>
+                            <p class="item-desc">"Gorengan Mantul" - Level Up Your Taste Buds!</p>
+                            <span class="badge badge-popular">Populer</span>
+                        </div>
+                        <div class="item-price">Rp 15.000</div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3 class="item-name">Sate Ayam</h3>
+                            <p class="item-desc">"Sateyud" - The Ultimate Meat Stick Vibe!</p>
+                            <span class="badge badge-new">Baru</span>
+                        </div>
+                        <div class="item-price">Rp 20.000</div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3 class="item-name">Rendang Daging</h3>
+                            <p class="item-desc">"Endulita" - The Legendary Beef Vibe!</p>
+                        </div>
+                        <div class="item-price">Rp 15.000</div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3 class="item-name">Gado-Gado</h3>
+                            <p class="item-desc">"Veggie Slay" - The Ultimate Plant-Based Glow Up!</p>
+                            <span class="badge badge-vegan">Vegan</span>
+                        </div>
+                        <div class="item-price">Rp 15.000</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-category">
+                <div class="category-title">
+                    <i class="fas fa-glass-cheers"></i>
+                    <h2>NYEGERKEUN AREA</h2>
+                </div>
+                <div class="menu-items">
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3 class="item-name">Es Jeruk Segar</h3>
+                            <p class="item-desc">"Jerukyuss" - The Ultimate Vitamin C Boost!</p>
+                        </div>
+                        <div class="item-price">Rp 5.000</div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3 class="item-name">Es Teh Manis</h3>
+                            <p class="item-desc">"Tehyeay" - The OG Mood Booster!</p>
+                            <span class="badge badge-popular">Populer</span>
+                        </div>
+                        <div class="item-price">Rp 3.000</div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3 class="item-name">Wedang Jahe</h3>
+                            <p class="item-desc">"Jahuuk" - The Ultimate Warm Hug in a Cup!</p>
+                        </div>
+                        <div class="item-price">Rp 8.000</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-category">
+                <div class="category-title">
+                    <i class="fas fa-cookie"></i>
+                    <h2>SWEET GEUDEUN</h2>
+                </div>
+                <div class="menu-items">
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3 class="item-name">Pisang Goreng</h3>
+                            <p class="item-desc">"Pisgor Slay" - The Crispy Queen!</p>
+                        </div>
+                        <div class="item-price">Rp 12.000</div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3 class="item-name">Klepon</h3>
+                            <p class="item-desc">"Kleponation" - The Ultimate Bite-Sized Surprise!</p>
+                            <span class="badge badge-vegan">Vegan</span>
+                        </div>
+                        <div class="item-price">Rp 10.000</div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3 class="item-name">Bubur Sumsum</h3>
+                            <p class="item-desc">"Sumsum Slurp" - The Ultimate Comfort Bowl!</p>
+                        </div>
+                        <div class="item-price">Rp 12.000</div>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="https://wa.me/6285775394770?text=Halo,%20saya%20ingin%20memesan%20makanan%20dari%20Warung%20Sunda" class="order-btn" target="_blank">
+                <i class="fas fa-shopping-cart"></i> Pesan Sekarang via WhatsApp
+            </a>
+        </div>
+    </section>
+    
+    <!-- Team Section -->
+    <div class="team-section">
+        <div class="container">
+            <h2 class="section-title">Tim Pengembang</h2>
+            <div class="team-container">
+                <div class="team-member">
+                    <h3 class="member-name">RAIHAN NUR HIDAYAT</h3>
+                    <p class="member-role">Frontend Developer</p>
+                    <p class="member-desc">Tampilan webeuna teh kudu eye-catching banget, nyieun nu nginget betah scroll-scroll! Warna na fresh, tombol na gede tur jelas, layout na clean jiga feed Instagram, pokonana mah user experience na kudu nendang biar siapa waé jadi salting betah ngoprek-ngoprek.</p>
+                </div>
+                
+                <div class="team-member">
+                    <h3 class="member-name">ABDURROUF GHANY</h3>
+                    <p class="member-role">Backend Developer</p>
+                    <p class="member-desc">Backend Developer teh si mastermind nu ngajieun logic jeung otak tina hiji aplikasi! Manehna nu ngatur database, API, jeung server-side scripting, make bahasa kawas JavaScript (Node.js), Python, PHP, jeung sajabana. Tugasna mah nyieun sistem anu stabil, aman, jeung efisien, sangkan frontend bisa jalan lancar, data kaolah bener, jeung user experience jadi mulus tanpa kendala.</p>
+                </div>
+                
+                <div class="team-member">
+                    <h3 class="member-name">DAVA SYALFINAR DEWANGGA</h3>
+                    <p class="member-role">UI/UX Designer</p>
+                    <p class="member-desc">UI/UX Designer teh kayak arsitek nu ngadesain experience pikeun user! Manehna nu ngatur tampilan (UI) supaya estetik tur nyenangkeun panon, sarta ngatur alur (UX) supaya gampang dipake tur intuitif. Tujuanna mah nyieun produk digital nu ngarasa "just right" di mata jeung di tangan user.</p>
+                </div>
+                
+                <div class="team-member">
+                    <h3 class="member-name">YAHYA SETYA PAS</h3>
+                    <p class="member-role">Content Creator</p>
+                    <p class="member-desc">Content Creator teh si kreator nu nyieun kontén anu nendang pikeun feed medsos! Manehna ahli ngolah kata, visual, jeung video pikeun nyarita jeung audience, ngajieun kontén anu viralable, relatable, jeung shareable. Tujuanna mah ngabangun komunitas, ngajaga engagement, jeung nyieun brand atawe dirina jadi iconic di dunya digital.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="kontak">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section" id="tentang">
+                    <h3>WARSUN</h3>
+                    <p>"Warung Sunda Ngeunah Pisan udah jadi legenda sejak 2010 - dari jaman BBM sampai era TikTok, kita tetap konsisten slaying dengan rasa authentic Sunda yang bikin 100.000+ customer auto ketagihan dan balik lagi!</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Kontak Kami</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Jl. Raya Emerald No. 23, Bintaro</p>
+                    <p><i class="fas fa-phone"></i> 085775394770</p>
+                    <p><i class="fas fa-envelope"></i> info@WARSUN</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Jam Operasional</h3>
+                    <p>Senin - Jumat: 10.00 - 22.00</p>
+                    <p>Sabtu - Minggu: Libur</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Ikuti Kami</h3>
+                    <div class="social-icons">
+                        <a href="https://wa.me/6285775394770" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; PT WARSUN</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Variabel untuk menyimpan posisi scroll terakhir
+        let lastScrollTop = 0;
+        const header = document.getElementById('main-header');
+        const headerHeight = header.offsetHeight;
+        
+        // Fungsi untuk mengatur tampilan header berdasarkan scroll
+        function handleHeaderOnScroll() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > lastScrollTop && scrollTop > headerHeight) {
+                // Scroll ke bawah - sembunyikan header
+                header.classList.add('header-hidden');
+            } else {
+                // Scroll ke atas - tampilkan header
+                header.classList.remove('header-hidden');
+            }
+            
+            lastScrollTop = scrollTop;
+        }
+        
+        // Event listener untuk scroll
+        window.addEventListener('scroll', handleHeaderOnScroll, { passive: true });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            const searchInput = document.getElementById('search-input');
+            const allMenuCategories = document.querySelectorAll('.menu-category');
+            
+            // Animasi untuk item menu
+            menuItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 100 + (index * 100));
+            });
+            
+            // Fungsi pencarian
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                let hasResults = false;
+                
+                allMenuCategories.forEach(category => {
+                    const items = category.querySelectorAll('.menu-item');
+                    let categoryHasResults = false;
+                    
+                    items.forEach(item => {
+                        const itemName = item.querySelector('.item-name').textContent.toLowerCase();
+                        const itemDesc = item.querySelector('.item-desc').textContent.toLowerCase();
+                        
+                        if (itemName.includes(searchTerm) || itemDesc.includes(searchTerm)) {
+                            item.classList.remove('hidden');
+                            categoryHasResults = true;
+                            hasResults = true;
+                        } else {
+                            item.classList.add('hidden');
+                        }
+                    });
+                    
+                    // Tampilkan atau sembunyikan kategori berdasarkan hasil
+                    const categoryTitle = category.querySelector('.category-title');
+                    const menuItemsContainer = category.querySelector('.menu-items');
+                    
+                    if (categoryHasResults) {
+                        category.classList.remove('hidden');
+                        
+                        // Hapus pesan no results jika ada
+                        const existingNoResults = menuItemsContainer.querySelector('.no-results');
+                        if (existingNoResults) {
+                            existingNoResults.remove();
+                        }
+                    } else {
+                        category.classList.add('hidden');
+                    }
+                });
+                
+                // Tampilkan pesan jika tidak ada hasil
+                if (!hasResults) {
+                    const noResults = document.createElement('div');
+                    noResults.className = 'no-results';
+                    noResults.textContent = 'Maaf, tidak ada menu yang sesuai dengan pencarian Anda.';
+                    
+                    // Cari container menu pertama yang visible
+                    const firstCategory = document.querySelector('.menu-category:not(.hidden)');
+                    if (firstCategory) {
+                        firstCategory.querySelector('.menu-items').appendChild(noResults);
+                    } else {
+                        document.querySelector('.menu-items').appendChild(noResults);
+                    }
+                }
+            });
+            
+            // Smooth scroll untuk navigasi
+            document.querySelectorAll('nav a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - header.offsetHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Animasi tambahan untuk team section
+        document.addEventListener('DOMContentLoaded', function() {
+            const teamMembers = document.querySelectorAll('.team-member');
+            
+            // Observer untuk animasi scroll
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            teamMembers.forEach(member => {
+                observer.observe(member);
+            });
+        });
+    </script>
+</body>
+</html>
